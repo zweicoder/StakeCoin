@@ -22,17 +22,18 @@ contract StakeCoin {
         developer = msg.sender;
     }
 
-    /// @notice Stake an amount of your coins on an id.
+    /// @notice Stake an `amount` of your coins on an `id`.
     /// @param id The identifier you want to stake your coins on. Can be your own reddit username or others (e.g. /u/zweicoder@reddit).
+    /// @param amount The amount of ETH to stake
     function stake(string id, uint amount) external {
-        if (balanceOf[msg.sender] < amount) throw;
+        if (balanceOf[msg.sender] < amount * 1 ether) throw;
 
         balanceOf[msg.sender] -= amount;
         valueOf[id] += amount;
         stakeOf[msg.sender][id] += amount;
     }
 
-    /// @notice Unstakes everything you have from the given id.
+    /// @notice Unstakes everything you have from the given `id`.
     /// @param id The identifier to unstake from
     function unstake(string id) external {
         var amount = stakeOf[msg.sender][id];
@@ -59,14 +60,14 @@ contract StakeCoin {
 
     }
 
-    /// @notice Withdraw all unfrozen funds from withdrawals
+    /// @notice Withdraw all unfrozen funds from `withdrawals`
     function withdraw() external {
         if (now > withdrawals[msg.sender].unlockedAt) throw;
 
         msg.sender.send(withdrawals[msg.sender].amount);
     }
 
-    /// @notice Deposit the amount sent with this transaction to be converted as StakeCoin
+    /// @notice Deposit the amount sent with this transaction to be converted as `StakeCoin`
     function deposit() {
         balanceOf[msg.sender] += msg.value;
     }
@@ -101,4 +102,7 @@ contract StakeCoin {
         return valueOf[id];
     }
 
+    function getStake(address of, string id) constant returns(uint staked) {
+        return stakeOf[of][id];
+    }
 }
