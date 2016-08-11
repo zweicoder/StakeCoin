@@ -1,0 +1,33 @@
+{
+  "name": "StakeCoin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test",
+    "clean:test": "rm -rf test",
+    "build:test": "babel test.es6/ -d test/ -s",
+    "watch:test": "npm run build:test -- --watch",
+    "deploy:test": "export NODE_ENV=test && truffle migrate --reset"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zweicoder/Judge.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zweicoder/Judge/issues"
+  },
+  "homepage": "https://github.com/zweicoder/Judge#readme",
+  "devDependencies": {
+    "axios": "^0.13.1",
+    "babel": "^6.5.2",
+    "babel-cli": "^6.11.4",
+    "babel-preset-es2015": "^6.13.2",
+    "ethereumjs-testrpc": "^2.1.0"
+  }
+}
