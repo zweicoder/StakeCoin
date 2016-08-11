@@ -102,7 +102,7 @@ contract StakeCoin {
         return valueOf[id];
     }
 
-    function getStake(address of, string id) constant returns(uint staked) {
-        return stakeOf[of][id];
+    function getStake(address user, string id) constant returns(uint staked) {
+        return stakeOf[user][id];
     }
 }
