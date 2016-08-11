@@ -20,21 +20,21 @@ function rpc(method, arg) {
 
 export default {
   snap: null,
-  saveSnapshot () {
+  saveSnapshot() {
     return rpc('evm_snapshot')
-      .then((res)=>{
+      .then((res) => {
         this.snap = res.result;
       })
   },
 
-  revertSnapshot () {
+  revertSnapshot() {
     return rpc('evm_revert', [this.snap])
   },
 
   setTime(newTime) {
-  const baseURL = 'http://localhost:8546'
-  return axios.post(baseURL, {
-    time: newTime
-  })
-}
+    const baseURL = 'http://localhost:8546'
+    return axios.post(baseURL, {
+      time: newTime
+    })
+  }
 }

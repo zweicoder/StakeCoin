@@ -11,7 +11,7 @@ contract('StakeCoin#stake', (accounts) => {
     return stakeCoin.deposit({
       from: user,
       value: depositInWei
-    }).then(()=> utils.saveSnapshot())
+    }).then(() => utils.saveSnapshot())
   })
 
   it('should fail to stake above sender balance', () => {
@@ -24,28 +24,28 @@ contract('StakeCoin#stake', (accounts) => {
       })
   })
 
-  it('should stake coins on a string identifier', ()=>{
+  it('should stake coins on a string identifier', () => {
     const stakeCoin = StakeCoin.deployed();
     const amountStaked = deposit;
     return stakeCoin.stake(id, amountStaked)
-    .then(()=>{
-      const p1 = stakeCoin.getBalanceInEth.call()
-      .then((balance)=> assert.equal(balance, deposit - amountStaked, 'Balance should reduce by the amount staked'))
+      .then(() => {
+        const p1 = stakeCoin.getBalanceInEth.call()
+          .then((balance) => assert.equal(balance, deposit - amountStaked, 'Balance should reduce by the amount staked'))
 
-      const p2 = stakeCoin.getValueOf.call(id)
-        .then((value)=> assert.equal(value, amountStaked, 'Value of id should increase due to amount staked'))
+        const p2 = stakeCoin.getValueOf.call(id)
+          .then((value) => assert.equal(value, amountStaked, 'Value of id should increase due to amount staked'))
 
-      const p3 = stakeCoin.getStake.call(user, id)
-        .then((amount) => assert.equal(amount, amountStaked), 'stakeOf user on id should increase')
+        const p3 = stakeCoin.getStake.call(user, id)
+          .then((amount) => assert.equal(amount, amountStaked), 'stakeOf user on id should increase')
 
-      return Promise.all([p1, p2, p3])
-    })
+        return Promise.all([p1, p2, p3])
+      })
   })
 
-  it('should revert to saved snapshot', ()=>{
+  it('should revert to saved snapshot', () => {
     const stakeCoin = StakeCoin.deployed();
     return utils.revertSnapshot()
-      .then(()=> stakeCoin.getBalanceInEth.call())
-      .then((balance)=> assert.equal(balance, deposit))
+      .then(() => stakeCoin.getBalanceInEth.call())
+      .then((balance) => assert.equal(balance, deposit))
   })
 })
