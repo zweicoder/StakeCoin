@@ -64,9 +64,9 @@ contract('StakeCoin#unlock', (accounts) => {
       .then((res) => {
         const [amount, unlockedAt] = res;
         const unlockedAmount = web3.fromWei(amount.toNumber(), 'ether');
-        // (funds.unlockedAt * funds.amount) / newAmount + ((now + MIN_LOCK_PERIOD) * amount) / newAmount;
         const updatedTime = ((5 * days + now) * 0.25) / 1 + ((secondRequestTime + 5 * days) * 0.75) / 1;
         assert.equal(unlockedAmount, 1, 'It should unlock 1 eth');
+        // Floor cause of how solidity handles division
         assert.equal(unlockedAt.toNumber(), Math.floor(updatedTime), 'Updated unlocked time should be based on the proportion of unlocked amounts');
       })
   })
