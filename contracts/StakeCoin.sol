@@ -24,9 +24,9 @@ contract StakeCoin {
 
     /// @notice Stake an `amount` of your coins on an `id`.
     /// @param id The identifier you want to stake your coins on. Can be your own reddit username or others (e.g. /u/zweicoder@reddit).
-    /// @param amount The amount of ETH to stake
+    /// @param amount The amount of Wei to stake
     function stake(string id, uint amount) external {
-        if (balanceOf[msg.sender] < amount * 1 ether) throw;
+        if (balanceOf[msg.sender] < amount) throw;
 
         balanceOf[msg.sender] -= amount;
         valueOf[id] += amount;
@@ -94,8 +94,8 @@ contract StakeCoin {
         deposit();
     }
 
-    function getBalanceInEth() constant returns(uint balance) {
-        return balanceOf[msg.sender] / 1000000000000000000;
+    function getBalance() constant returns(uint balance) {
+        return balanceOf[msg.sender];
     }
 
     function getValueOf(string id) constant returns(uint totalValue){
@@ -103,6 +103,7 @@ contract StakeCoin {
     }
 
     function getStake(address user, string id) constant returns(uint staked) {
+        // This inconsistency in allowing to specify user is for flexibility so we can use this for things other than reddit usernames
         return stakeOf[user][id];
     }
 }
