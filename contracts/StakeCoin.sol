@@ -62,9 +62,10 @@ contract StakeCoin {
 
     /// @notice Withdraw all unfrozen funds from `withdrawals`
     function withdraw() external {
-        if (now > withdrawals[msg.sender].unlockedAt) throw;
-
-        msg.sender.send(withdrawals[msg.sender].amount);
+        if (now < withdrawals[msg.sender].unlockedAt) throw;
+        var amount = withdrawals[msg.sender].amount;
+        withdrawals[msg.sender].amount = 0;
+        msg.sender.send(amount);
     }
 
     /// @notice Deposit the amount sent with this transaction to be converted as `StakeCoin`
