@@ -54,7 +54,6 @@ contract('StakeCoin#stake', (accounts) => {
   it('should revert to saved snapshot', () => {
     const stakeCoin = StakeCoin.deployed();
     return Rpc.revertSnapshot()
-      .then(() => stakeCoin.getBalance.call())
       .then(()=> checkBalanceEquals(stakeCoin, deposit, 'Balance should be reverted'))
   })
 
@@ -62,6 +61,7 @@ contract('StakeCoin#stake', (accounts) => {
     const stakeCoin = StakeCoin.deployed();
     const amountStaked = 0.5;
     return Rpc.revertSnapshot()
+      // .then(()=>Rpc.saveSnapshot())
       .then(() => stakeCoin.stake(id, ethToWei(amountStaked) ))
       .then(() => {
         const p1 = checkBalanceEquals(stakeCoin, deposit - amountStaked, 'Balance should reduce by 0.5', {
@@ -83,11 +83,20 @@ contract('StakeCoin#stake', (accounts) => {
         return Promise.all([p1, p2, p3])
       })
   })
+  it('should asd a',()=>{
+    const stakeCoin = StakeCoin.deployed();
+    const [id1, id2] = ['id_1', 'id_2'];
+    return Rpc.revertSnapshot()
+    .then(()=> checkBalanceEquals(stakeCoin, 1, 'testtt123', {from:user2}))
+    .then(()=> checkBalanceEquals(stakeCoin, 1, 'testtt', {from:user1}))
+  })
 
   it('should allow staking on different string identifiers', () => {
     const stakeCoin = StakeCoin.deployed();
     const [id1, id2] = ['id_1', 'id_2'];
     return Rpc.revertSnapshot()
+    .then(()=> checkBalanceEquals(stakeCoin, 1, 'testtt123', {from:user2}))
+      .then(()=> checkBalanceEquals(stakeCoin, 1, 'testtt', {from:user1}))
       .then(() => stakeCoin.stake(id1, ethToWei(0.25)))
       .then(() => stakeCoin.stake(id2, ethToWei(0.25)))
       .then(() => {
@@ -98,30 +107,6 @@ contract('StakeCoin#stake', (accounts) => {
         const p5 = checkStakeEquals(stakeCoin, user1, id2, 0.25, 'stakeOf user1 on id_2 should increase by 0.25')
 
         return Promise.all([p1, p2, p3, p4, p5])
-      })
-  })
-
-  it('should unstake coins', () => {
-    const stakeCoin = StakeCoin.deployed();
-    const [id1, id2] = ['id_1', 'id_2'];
-    return Rpc.revertSnapshot()
-      .then(() => stakeCoin.stake(id1, ethToWei(0.5)))
-      .then(() => stakeCoin.stake(id2, ethToWei(0.5)))
-      .then(() => stakeCoin.unstake(id1))
-      .then(() => {
-        const p1 = checkBalanceEquals(stakeCoin, deposit - 0.5, 'Balance should increase by 0.5')
-        const p2 = checkValueEquals(stakeCoin, id1, 0, 'Value of id_1 should reduce by 0.5')
-        const p3 = checkStakeEquals(stakeCoin, user1, id1, 0, 'stakeOf user1 on id1 should zero')
-
-        return Promise.all([p1, p2, p3])
-      })
-      .then(() => stakeCoin.unstake(id1))
-      .then(() => {
-        const p1 = checkBalanceEquals(stakeCoin, deposit, 'Balance should increase by another 0.5')
-        const p2 = checkValueEquals(stakeCoin, id2, 0, 'Value of id_2 should reduce by 0.5')
-        const p3 = checkStakeEquals(stakeCoin, user1, id2, 0, 'stakeOf user1 on id2 should zero')
-
-        return Promise.all([p1, p2, p3])
       })
   })
 
@@ -151,9 +136,41 @@ contract('StakeCoin#stake', (accounts) => {
         const p5 = checkStakeEquals(stakeCoin, user1, id1, 1, 'Stake of user1 on id1 should be 1')
         const p6 = checkStakeEquals(stakeCoin, user2, id1, 0.5, 'Stake of user2 on id1 should be 0.5')
         const p7 = checkStakeEquals(stakeCoin, user2, id2, 0.3, 'Stake of user2 on id2 should be 0.3')
-          .then((value) => assert.equal(value, val, message))
 
         return Promise.all([p1, p2, p3, p4, p5, p6, p7])
+      })
+  })
+
+  it('should unstake coins', () => {
+    const stakeCoin = StakeCoin.deployed();
+    const [id1, id2] = ['id_1', 'id_2'];
+    return Rpc.revertSnapshot()
+      .then(() => stakeCoin.stake(id1, ethToWei(0.5)))
+      .then(() => stakeCoin.stake(id2, ethToWei(0.5)))
+      .then(() => stakeCoin.stake(id1, ethToWei(0.5), {from:user2} ) )
+      .then(() => stakeCoin.unstake(id1))
+      .then(() => {
+        const p1 = checkBalanceEquals(stakeCoin, deposit - 0.5, 'Balance should increase by 0.5')
+        const p2 = checkValueEquals(stakeCoin, id1, 0.5, 'Value of id_1 should reduce by 0.5')
+        const p3 = checkStakeEquals(stakeCoin, user1, id1, 0, 'stakeOf user1 on id1 should zero')
+
+        return Promise.all([p1, p2, p3])
+      })
+      .then(() => stakeCoin.unstake(id1))
+      .then(() => {
+        const p1 = checkBalanceEquals(stakeCoin, deposit - 0.5, 'Should be no-op')
+        const p2 = checkValueEquals(stakeCoin, id1, 0.5, 'Should be no-op')
+        const p3 = checkStakeEquals(stakeCoin, user1, id1, 0, 'Should be no-op')
+
+        return Promise.all([p1, p2, p3])
+      })
+      .then(() => stakeCoin.unstake(id2))
+      .then(() => {
+        const p1 = checkBalanceEquals(stakeCoin, deposit, 'Balance should increase by another 0.5')
+        const p2 = checkValueEquals(stakeCoin, id2, 0, 'Value of id_2 should reduce by 0.5')
+        const p3 = checkStakeEquals(stakeCoin, user1, id2, 0, 'stakeOf user1 on id2 should zero')
+
+        return Promise.all([p1, p2, p3])
       })
   })
 
