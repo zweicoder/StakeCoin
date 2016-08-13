@@ -45,6 +45,7 @@ const Rpc = {
 
   revertSnapshot() {
     return rpc('evm_revert', [this.snap])
+    .then((res)=> this.saveSnapshot())
   },
 
   setTime(newTime) {
