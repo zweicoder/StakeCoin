@@ -1,4 +1,4 @@
-import {checkBalanceEquals, checkStakeEquals, checkValueEquals, Rpc, ethToWei} from './utils.js';
+import { checkBalanceEquals, checkStakeEquals, checkValueEquals, Rpc, ethToWei } from './utils.js';
 
 contract('StakeCoin#stake', (accounts) => {
   const [user1, user2] = accounts;
@@ -54,7 +54,7 @@ contract('StakeCoin#stake', (accounts) => {
   it('should revert to saved snapshot', () => {
     const stakeCoin = StakeCoin.deployed();
     return Rpc.revertSnapshot()
-      .then(()=> checkBalanceEquals(stakeCoin, deposit, 'Balance should be reverted'))
+      .then(() => checkBalanceEquals(stakeCoin, deposit, 'Balance should be reverted'))
   })
 
   it('should allow repeated staking on same string identifiers', () => {
@@ -62,7 +62,7 @@ contract('StakeCoin#stake', (accounts) => {
     const amountStaked = 0.5;
     return Rpc.revertSnapshot()
       // .then(()=>Rpc.saveSnapshot())
-      .then(() => stakeCoin.stake(id, ethToWei(amountStaked) ))
+      .then(() => stakeCoin.stake(id, ethToWei(amountStaked)))
       .then(() => {
         const p1 = checkBalanceEquals(stakeCoin, deposit - amountStaked, 'Balance should reduce by 0.5', {
           from: user1
@@ -83,20 +83,28 @@ contract('StakeCoin#stake', (accounts) => {
         return Promise.all([p1, p2, p3])
       })
   })
-  it('should asd a',()=>{
+  it('should asd a', () => {
     const stakeCoin = StakeCoin.deployed();
     const [id1, id2] = ['id_1', 'id_2'];
     return Rpc.revertSnapshot()
-    .then(()=> checkBalanceEquals(stakeCoin, 1, 'testtt123', {from:user2}))
-    .then(()=> checkBalanceEquals(stakeCoin, 1, 'testtt', {from:user1}))
+      .then(() => checkBalanceEquals(stakeCoin, 1, 'testtt123', {
+        from: user2
+      }))
+      .then(() => checkBalanceEquals(stakeCoin, 1, 'testtt', {
+        from: user1
+      }))
   })
 
   it('should allow staking on different string identifiers', () => {
     const stakeCoin = StakeCoin.deployed();
     const [id1, id2] = ['id_1', 'id_2'];
     return Rpc.revertSnapshot()
-    .then(()=> checkBalanceEquals(stakeCoin, 1, 'testtt123', {from:user2}))
-      .then(()=> checkBalanceEquals(stakeCoin, 1, 'testtt', {from:user1}))
+      .then(() => checkBalanceEquals(stakeCoin, 1, 'testtt123', {
+        from: user2
+      }))
+      .then(() => checkBalanceEquals(stakeCoin, 1, 'testtt', {
+        from: user1
+      }))
       .then(() => stakeCoin.stake(id1, ethToWei(0.25)))
       .then(() => stakeCoin.stake(id2, ethToWei(0.25)))
       .then(() => {
@@ -147,7 +155,9 @@ contract('StakeCoin#stake', (accounts) => {
     return Rpc.revertSnapshot()
       .then(() => stakeCoin.stake(id1, ethToWei(0.5)))
       .then(() => stakeCoin.stake(id2, ethToWei(0.5)))
-      .then(() => stakeCoin.stake(id1, ethToWei(0.5), {from:user2} ) )
+      .then(() => stakeCoin.stake(id1, ethToWei(0.5), {
+        from: user2
+      }))
       .then(() => stakeCoin.unstake(id1))
       .then(() => {
         const p1 = checkBalanceEquals(stakeCoin, deposit - 0.5, 'Balance should increase by 0.5')

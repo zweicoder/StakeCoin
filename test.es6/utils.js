@@ -45,7 +45,7 @@ const Rpc = {
 
   revertSnapshot() {
     return rpc('evm_revert', [this.snap])
-    .then((res)=> this.saveSnapshot())
+      .then((res) => this.saveSnapshot())
   },
 
   setTime(newTime) {
@@ -56,7 +56,7 @@ const Rpc = {
   }
 }
 
-export {Rpc}
+export { Rpc }
 
 export function ethToWei(x) {
   return web3.toWei(x, 'ether')
