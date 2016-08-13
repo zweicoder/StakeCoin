@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export function checkValueEquals(stakeCoin, id, val, message) {
   return stakeCoin.getValueOf.call(id)
     .then((value) => assert.equal(web3.fromWei(value.toNumber(), 'ether'), val, message))
