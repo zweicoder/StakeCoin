@@ -24,7 +24,7 @@ contract('StakeCoin#unlock', (accounts) => {
       .then(() => Rpc.saveSnapshot())
   })
 
-  it('should unlock all of the balance if amount > balance', () => {
+  it('should unlock and zero all of the balance if amount > balance', () => {
     const stakeCoin = StakeCoin.deployed();
     return revertToStart()
       .then(() => stakeCoin.unlock(ethToWei(1.1)))
@@ -50,6 +50,7 @@ contract('StakeCoin#unlock', (accounts) => {
         assert.equal(unlockedAmount, amountRequested, 'It should unlock 0.5 eth');
         assert.equal(unlockedAt.toNumber(), 5 * days + now, 'It should only unlock 5 days later');
       })
+      .then(() => checkBalanceEquals(stakeCoin, 0.5, 'Balance should reduce for withdrawal'))
   })
 
   it('should update the unlocked date upon another valid unlock request', () => {
@@ -69,6 +70,7 @@ contract('StakeCoin#unlock', (accounts) => {
         // Floor cause of how solidity handles division
         assert.equal(unlockedAt.toNumber(), Math.floor(updatedTime), 'Updated unlocked time should be based on the proportion of unlocked amounts');
       })
+      .then(() => checkBalanceEquals(stakeCoin, 0, 'Balance should reduce for withdrawal'))
   })
 
   it('should update the unlocked date upon another valid unlock request', () => {
@@ -87,5 +89,6 @@ contract('StakeCoin#unlock', (accounts) => {
         assert.equal(unlockedAmount, 1, 'It should unlock 1 eth');
         assert.equal(unlockedAt.toNumber(), Math.floor(updatedTime), 'Updated unlocked time should be based on the proportion of unlocked amounts');
       })
+      .then(() => checkBalanceEquals(stakeCoin, 0, 'Balance should reduce for withdrawal'))
   })
 })
