@@ -42,10 +42,10 @@ contract StakeCoin {
         stakeOf[msg.sender][id] = 0;
     }
 
-    /// @notice Transfers `amount` from `balanceOf` to `withdrawals` for withdrawal after the `MIN_LOCK_PERIOD`.
-    /// @param amount The amount you want to unlock
-    function unlock(uint amount) external {
-        if(balanceOf[msg.sender] < amount) throw;
+    /// @notice Transfers `amount` from unstaked funds in `balanceOf` to `withdrawals` for withdrawal after the `MIN_LOCK_PERIOD`. If amount is larger than available balance, this unlocks all of it.
+    /// @param _amount The amount you want to unlock. Unlocks everything
+    function unlock(uint _amount) external {
+        var amount = min(_amount, balanceOf[msg.sender]);
 
         balanceOf[msg.sender] -= amount;
         if (withdrawals[msg.sender].amount == 0) {
@@ -55,7 +55,7 @@ contract StakeCoin {
 
         LockedFunds funds = withdrawals[msg.sender];
         uint newAmount = funds.amount + amount;
-        uint unlockedAt = funds.unlockedAt * (funds.amount / newAmount) + (now + MIN_LOCK_PERIOD) * (amount / newAmount);
+        uint unlockedAt = (funds.unlockedAt * funds.amount) / newAmount + ((now + MIN_LOCK_PERIOD) * amount) / newAmount;
         withdrawals[msg.sender] = LockedFunds(newAmount, unlockedAt);
 
     }
@@ -105,5 +105,13 @@ contract StakeCoin {
     function getStake(address user, string id) constant returns(uint staked) {
         // This inconsistency in allowing to specify user is for flexibility so we can use this for things other than reddit usernames
         return stakeOf[user][id];
+    }
+
+    function getWithdrawalStatus(address user) constant returns(uint amount, uint unlockedAt) {
+        return (withdrawals[user].amount, withdrawals[user].unlockedAt);
+    }
+
+    function min(uint a, uint b) constant internal returns(uint) {
+        return a < b ? a : b;
     }
 }
