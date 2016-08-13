@@ -1,3 +1,19 @@
+export function checkValueEquals(stakeCoin, id, val, message) {
+  return stakeCoin.getValueOf.call(id)
+    .then((value) => assert.equal(web3.fromWei(value.toNumber(), 'ether'), val, message))
+}
+
+export function checkBalanceEquals(stakeCoin, val, message, kwargs) {
+  kwargs = kwargs || {};
+  return stakeCoin.getBalance.call(kwargs)
+    .then((value) => assert.equal(web3.fromWei(value.toNumber(), 'ether'), val, message))
+}
+
+export function checkStakeEquals(stakeCoin, user, id, val, message) {
+  return stakeCoin.getStake.call(user, id)
+    .then((amount) => assert.equal(web3.fromWei(amount.toNumber(), 'ether'), val, message))
+}
+
 function rpc(method, arg) {
   var req = {
     jsonrpc: "2.0",
@@ -18,7 +34,7 @@ function rpc(method, arg) {
   })
 }
 
-export default {
+const Rpc = {
   snap: null,
   saveSnapshot() {
     return rpc('evm_snapshot')
@@ -37,4 +53,10 @@ export default {
       time: newTime
     })
   }
+}
+
+export {Rpc}
+
+export function ethToWei(x) {
+  return web3.toWei(x, 'ether')
 }
