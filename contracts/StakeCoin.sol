@@ -1,6 +1,6 @@
 contract StakeCoin {
-    mapping(string => uint) valueOf; // amount of a string from all the stakes placed
-    mapping(address => uint) balanceOf; // balance of a user
+    mapping(string => uint256) valueOf; // amount of a string from all the stakes placed
+    mapping(address => uint256) public balanceOf; // balance of a user
     mapping(address => mapping(string => uint)) stakeOf; // Stake of a user given to a string identifier
     mapping(address => LockedFunds) withdrawals;
     address developer;
@@ -65,7 +65,7 @@ contract StakeCoin {
         if (now < withdrawals[msg.sender].unlockedAt) throw;
         var amount = withdrawals[msg.sender].amount;
         withdrawals[msg.sender].amount = 0;
-        msg.sender.send(amount);
+        if(!msg.sender.send(amount)) throw;
     }
 
     /// @notice Deposit the amount sent with this transaction to be converted as `StakeCoin`
