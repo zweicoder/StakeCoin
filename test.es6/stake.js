@@ -83,17 +83,6 @@ contract('StakeCoin#stake', (accounts) => {
         return Promise.all([p1, p2, p3])
       })
   })
-  it('should asd a', () => {
-    const stakeCoin = StakeCoin.deployed();
-    const [id1, id2] = ['id_1', 'id_2'];
-    return Rpc.revertSnapshot()
-      .then(() => checkBalanceEquals(stakeCoin, 1, 'testtt123', {
-        from: user2
-      }))
-      .then(() => checkBalanceEquals(stakeCoin, 1, 'testtt', {
-        from: user1
-      }))
-  })
 
   it('should allow staking on different string identifiers', () => {
     const stakeCoin = StakeCoin.deployed();
