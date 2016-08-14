@@ -9,7 +9,39 @@ function setTime(newTime) {
 }
 
 server.listen(port, function(err, blockchain) {
-  console.log('Listening on ', port);
+  if (err) {
+    console.log(err);
+    return;
+  }
+  console.log("");
+  console.log("Available Accounts");
+  console.log("==================");
+
+  var accounts = blockchain.accounts;
+  var addresses = Object.keys(accounts);
+
+  addresses.forEach(function(address, index) {
+    console.log("(" + index + ") " + address);
+  });
+
+  console.log("");
+  console.log("Private Keys");
+  console.log("==================");
+
+  addresses.forEach(function(address, index) {
+    console.log("(" + index + ") " + accounts[address].secretKey.toString("hex"));
+  });
+
+  console.log("");
+  console.log("HD Wallet");
+  console.log("==================");
+  console.log("Mnemonic:      " + blockchain.mnemonic);
+  console.log("Base HD Path:  " + blockchain.wallet_hdpath + "/{account_index}")
+
+
+  console.log("");
+  console.log("Listening on localhost:" + port);
+
 });
 
 var backdoor = require('http').createServer((request, response) => {
@@ -28,9 +60,9 @@ var backdoor = require('http').createServer((request, response) => {
         var payload;
         payload = JSON.parse(body);
         if (payload.time) {
-            console.log('Setting time to: ',payload.time);
-            setTime(payload.time * 1000);
-            return response.end('')
+          console.log('Setting time to: ', payload.time);
+          setTime(payload.time * 1000);
+          return response.end('')
         }
 
         break;
@@ -40,6 +72,6 @@ var backdoor = require('http').createServer((request, response) => {
   })
 })
 
-backdoor.listen(port+1, (err)=>{
-    if (err) console.err(err)
+backdoor.listen(port + 1, (err) => {
+  if (err) console.err(err)
 })
